@@ -1,0 +1,28 @@
+# This is the configuration as code plugin's config file, with this system everything you can configure for any plugin installed can be modified within this file.
+# For ease of use if you navigate to the following url for this jenkins deployment you can see how to modify all of these values. ${JENKINS_IP}:8080/configuration-as-code/reference
+
+# Definition of a jenkins admin user for managing jenkins and custom users dirrectly
+jenkins:
+    securityRealm:
+      local:
+        allowsSignup: false
+        users:
+           # Since these are sensative values we don't want them in clear text and instead "inject" them at runtime from a secured source
+         - id: ${JENKINS_ADMIN_ID}
+           password: ${JENKINS_ADMIN_PASSWORD}
+    authorizationStrategy:
+      globalMatrix:
+        permissions:
+          - "Overall/Administer:admin" # admin has "god mode" controll over the jenkins server
+          - "Overall/Read:authenticated" # only allow authenticated users to view jenkins
+
+security:
+  queueItemAuthenticator:
+    authenticators:
+    - global:
+        strategy: triggeringUsersAuthorizationStrategy
+
+# definition of what the jenkins URL is, you would want to replace server_ip with whatever domain you have this deployed to
+unclassified:
+    location:
+      url: http://server_ip:8080/
